@@ -1,3 +1,7 @@
+# Engineering Knowledge AI Agent Test
+
+
+
 ## 1. Differences between REST API and MCP in the Context of AI
 
 The differences originate from their initial design. The **REST API** approach is generalist, working on any system prior while **MCP’s** ultimate goal is to help LLM-based agents interact with existing systems by standardizing the features that support modern Agentic workflows. Both are relevant to agentic use cases since they operate within the domain of tool-calling features, but MCP’s advantage over its predecessor is that it provides a standardized and efficient way to integrate your tool. You might be able to just define your REST API+JSON schema tool on a tool-calling node and manage it that way, but this would become troublesome when your array of tools expands and your agentic workflow becomes more complex. In addition, the agentic pipeline itself is stateful and you want to manage your tools in such a way that they share context, which would be factored your problem exponentially. Hence, MCP would save you the hassle of managing it.
