@@ -52,6 +52,6 @@ As a result, we could reduce the memory usage relatively signficant. Here are br
 - Total summary DataFrames: 331.96 MB
 - Memory reduction: 75.2%
 
-By processing the dataset in **chunks** and aggregating within each chunk, we efficiently summarize the data while keeping memory usage manageable. This approach allows us to retain insights from the entire dataset **without any noticeable caveats**.
+🎉 By processing the dataset in **chunks** and aggregating within each chunk, we efficiently summarize the data while keeping memory usage manageable. This approach allows us to retain insights from the entire dataset **without any noticeable caveats**.
 
 
