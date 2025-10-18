@@ -47,4 +47,56 @@ It usefullness could be identified using different perspective:
 ---
 
 ## 5. How do you finetune the LLM model from raw ?
-Before starting on finetuning, we need to identify whether we have necessary resources to do that (data, conputing power, etc) to do that and if it is make sense to do that. Resource needed might vary depending on use cases so it would be different case by case. Identifying the right use case for doing finetune would also important before starting on grueling and might-not-be-fruitfull effort. Be wary that for most use cases, it might straight up more efficient to look for open source model which have similar properties to what we want in our use cases. If all above passed, move on to the model selection. We need to find a model which inherently well doing on which finetuning technique. We could find a model which work well on full finetuning base or adapter base approach. Finetuning technique selection also need a consideration from the use case and resource we have in hand coupled with the risk of each (full=risk of decay, adapter=risk of can't learn enough). Next step would be preparing the data so it would be suitable to the use case or task (instruct, code, reasoning etc), different use cases and model might have different inherent format of training data such as how they do event token, tooling call, etc, so we need to prepare it accordingly. Tokenize and embedding your data and similar to conventional machine learning, set up your hyperparameter and observability tools.
+
+**1. Identify the Right Use Case**
+Before starting on finetuning, we need to be wary that for most use cases, it might straight up more efficient to look for open source model which have similar properties to what we want in our use cases. Good finetuning candidates include:
+- Domain-specific language or style adaptation (e.g., legal, medical, technical).
+- Behavior alignment for specialized instruction following.
+- Task-specific improvements (e.g., summarization, classification, dialogue consistency).
+
+**2. Resource and Feasibility Check**
+Resource needed might vary depending on use cases so it would be different case by case. Identifying the right use case for doing finetune would also important before starting on grueling and might-not-be-fruitfull effort. Ensure you have enough high-quality, diverse, and consistently labeled data to support the target task. Verify that your hardware resources, such as GPUs or TPUs, provide sufficient VRAM for the chosen model size. Consider your budget, accounting for both compute costs and storage needs for datasets and model checkpoints. Finally, assess the time requirements, as finetuning can range from several hours to multiple days depending on the model complexity and batch size.
+
+**3. Model and Finetuning Technique Selection**
+If all above passed, move on to the model selection. We need to find a model which inherently well doing on which finetuning technique. We could find a model which work well on full finetuning base or adapter base approach. Finetuning technique selection also need a consideration from the use case and resource we have in hand coupled with the risk of each for example:
+- Full finetuning → Pros: maximal learning capacity. Cons: expensive, higher risk of model degradation.
+- LoRA / QLoRA / Adapter / Prefix tuning → Pros: efficient, modular. Cons: limited representational change.
+
+**4. Data Preparation**
+Next step would be preparing the data so it would be suitable to the use case or task (instruct, code, reasoning etc), different use cases and model might have different inherent format of training data such as how they do event token, tooling call, etc, so we need to prepare it accordingly. 
+
+
+```json   
+                                                                                                                    
+{                                                                                                                                   
+  "tool_calls": [                                                                                                                    
+    { "tool_name": "web_search", "parameters": {"query": "latest Mars rover discoveries"} },                                       
+    { "tool_name": "summarize", "parameters": {"text": "Mars rover discoveries..."}}                                             
+  ]                                                                                                                               
+}                                                                                                                                   
+```                                                                                                                                
+*JSON Schema Tool Calling Style*
+
+```json   
+                                                                                                       
+{                                                                                                                                   
+  "messages": [                                                                                                                    
+    {                                                                                                                              
+      "role": "assistant",                                                                                                         
+      "function_call": {                                                                                                           
+        "name": "get_weather",                                                                                                     
+        "arguments": "{ \"location\": \"Tokyo\" }"                                                                                
+      }                                                                                                                            
+    }                                                                                                                              
+  ]                                                                                                                               
+}                                                                                                                                   
+```                                                                                                                               
+*OpenAI Schema Tool Calling Style*    
+
+
+**5. Training Setup and Configuration**
+Tokenize and embedding your data and similar to conventional machine learning, set up your hyperparameter and observability tools. This can be done efficiently using libraries such as Hugging Face Transformers, which provide APIs like the **`Trainer` interface**  for training loops, evaluation, and logging, as well as tokenization and dataset management. Tools like `Unsloth` offer optimized quantization and fine-tuning workflows, helping reduce memory usage and accelerate training and inference for large language models.
+
+
+**6. Post-Training Evaluation and Deployment**
+After finetuning, evaluate your model on held-out data to measure task-specific performance, robustness, and alignment with desired behaviors. Once validated, prepare the model for deployment, which may include optimizations such as quantization to reduce memory and inference costs. Free and open-source quantization tools like `BitsAndBytes` or `GGUF` for quantization and model compression.
